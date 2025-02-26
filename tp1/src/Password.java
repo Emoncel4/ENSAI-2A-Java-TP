@@ -39,9 +39,9 @@ public class Password {
      * @return the 6-digit number that matches, or null if no match is found
      */
     public static String bruteForce6Digit(String targetHash) {
-
+        String nombre_a_tester = null;
         for (int i = 0; i < 1000000; i++) {
-            String nombre_a_tester = String.format("%06d", i);
+            nombre_a_tester = String.format("%06d", i);
             if (hashPassword(nombre_a_tester).equals(targetHash)) {
                 return nombre_a_tester;
             }
@@ -63,12 +63,35 @@ public class Password {
      * @param password the password to check
      * @return true if the password is strong, false otherwise
      */
-    public static boolean isStrongPassword(String password) {
+    public class Main {
+        public static boolean isStrongPassword(String password) {
+            if (password.length() < 12) {
+                return false; // Un mot de passe fort doit avoir au moins 12 caractères
+            }
+    
+            boolean hasUpperCase = false;
+            boolean hasDigit = false;
+            boolean hasWhitespace = false;
+    
+            for (int i = 0; i < password.length(); i++) {
+                char c = password.charAt(i);
+    
+                if (Character.isUpperCase(c)) {
+                    hasUpperCase = true;
+                }
+                if (Character.isDigit(c)) {
+                    hasDigit = true;
+                }
+                if (Character.isWhitespace(c)) {
+                    hasWhitespace = true;
+                }
+            }
+    
+            // Un mot de passe est fort s'il contient au moins une majuscule, un chiffre, et pas d'espace
+            return hasUpperCase && hasDigit && !hasWhitespace;
+        }
 
-        // Code here
-
-        return false;
-    }
+    
 
     /**
      * Checks the strength of multiple passwords and stores the results in a
