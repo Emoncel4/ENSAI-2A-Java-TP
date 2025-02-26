@@ -10,9 +10,50 @@ public class Login {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            System.out.print("Entrez votre nom d'utilisateur: ");
+            String username = scanner.nextLine().trim();
 
-            // Code here
+            // Vérifier si l'utilisateur existe
+            if (userDatabase.containsKey(username)) {
+                int attempts = 0;
+
+                // Permettre à l'utilisateur de tenter de se connecter avec son mot de passe
+                // jusqu'à 3 fois
+                while (attempts < 3) {
+                    System.out.print("Entrez votre mot de passe: ");
+                    String password = scanner.nextLine().trim();
+
+                    // Vérifier si le mot de passe est correct
+                    if (checkPassword(password, userDatabase.get(username))) {
+                        System.out.println("Login successful!");
+                        return; // Connexion réussie, sortie du programme
+                    } else {
+                        System.out.println("Mot de passe incorrect. Essayez à nouveau.");
+                        attempts++;
+                    }
+                }
+
+                System.out.println("Trop de tentatives échouées. Veuillez entrer un nom d'utilisateur.");
+            } else {
+                System.out.println("Nom d'utilisateur non trouvé. Essayez à nouveau.");
+            }
         }
+    }
+
+    /**
+     * Vérifie si le mot de passe entré correspond au mot de passe haché dans la
+     * base de données.
+     * 
+     * @param enteredPassword Le mot de passe entré par l'utilisateur.
+     * @param storedHash      Le mot de passe haché stocké dans la base de données.
+     * @return true si les mots de passe correspondent, false sinon.
+     */
+    public static boolean checkPassword(String enteredPassword, String storedHash) {
+        // Hacher le mot de passe entré et comparer avec le hachage stocké
+        String hashedEnteredPassword = hashPassword(enteredPassword);
+        return hashedEnteredPassword.equals(storedHash);
+    }
+
     }
 
     /**

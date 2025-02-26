@@ -1,9 +1,11 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Password {
     /**
@@ -68,14 +70,14 @@ public class Password {
             if (password.length() < 12) {
                 return false; // Un mot de passe fort doit avoir au moins 12 caractères
             }
-    
+
             boolean hasUpperCase = false;
             boolean hasDigit = false;
             boolean hasWhitespace = false;
-    
+
             for (int i = 0; i < password.length(); i++) {
                 char c = password.charAt(i);
-    
+
                 if (Character.isUpperCase(c)) {
                     hasUpperCase = true;
                 }
@@ -86,95 +88,129 @@ public class Password {
                     hasWhitespace = true;
                 }
             }
-    
-            // Un mot de passe est fort s'il contient au moins une majuscule, un chiffre, et pas d'espace
+
+            // Un mot de passe est fort s'il contient au moins une majuscule, un chiffre, et
+            // pas d'espace
             return hasUpperCase && hasDigit && !hasWhitespace;
         }
 
-    
+        /**
+         * Checks the strength of multiple passwords and stores the results in a
+         * HashMap.
+         *
+         * @param passwords An ArrayList of passwords to be checked.
+         * @return A HashMap where each password is mapped to a Boolean value:
+         *         true if the password is strong, false otherwise
+         */
+        public static HashMap<String, Boolean> checkPasswordsList(ArrayList<String> passwords) {
+            HashMap<String, Boolean> liste_securite = new HashMap<>();
 
-    /**
-     * Checks the strength of multiple passwords and stores the results in a
-     * HashMap.
-     *
-     * @param passwords An ArrayList of passwords to be checked.
-     * @return A HashMap where each password is mapped to a Boolean value:
-     *         true if the password is strong, false otherwise
-     */
-    public static HashMap<String, Boolean> checkPasswordsList(ArrayList<String> passwords) {
+            for (String password : passwords) {
+                liste_securite.put(password, isStrongPassword(password));
+            }
 
-        // Code here
+            return liste_securite;
+        }
 
-        return null;
-    }
+        /**
+         * Generates a secure random password with at least:
+         * <ul>
+         * <li>1 uppercase letter</li>
+         * <li>1 lowercase letter</li>
+         * <li>1 digit</li>
+         * <li>1 special character</li>
+         * </ul>
+         * 
+         * @param nbCar The desired length of the password (minimum 4).
+         * @return A randomly generated password that meets the security criteria.
+         */
 
-    /**
-     * Generates a secure random password with at least:
-     * <ul>
-     * <li>1 uppercase letter</li>
-     * <li>1 lowercase letter</li>
-     * <li>1 digit</li>
-     * <li>1 special character</li>
-     * </ul>
-     * 
-     * @param nbCar The desired length of the password (minimum 4).
-     * @return A randomly generated password that meets the security criteria.
-     */
-    public static String generatePassword(int nbCar) {
-
-        // Code here
-
-        return null;
-    }
-
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            // No arguments provided, running all questions
-            for (int i = 1; i <= 4; i++)
-                runQuestion(String.valueOf(i));
-        } else {
-            for (String arg : args) {
-                runQuestion(arg);
+        public static class LongueurException extends RuntimeException {
+            public LongueurException(String message) {
+                super(message);
             }
         }
-    }
 
-    private static void runQuestion(String questionNumber) {
+        public static String generatePassword(int nbCar) {
+            if (nbCar < 4)
+                throw new LongueurException("Le mot de passe doit contenir au moins 4 caractères");
 
-        System.out.println("\nQ" + questionNumber + "\n" + "-".repeat(20));
-        switch (questionNumber) {
-            case "1":
-                String HashedPwd = "a97755204f392b4d8787b38d898671839b4a770a864e52862055cdbdf5bc5bee";
-                String bruteForcedPwd = bruteForce6Digit(HashedPwd);
-                System.out.println(bruteForcedPwd != null ? bruteForcedPwd : "No result found");
-                break;
+            List<Character> liste_charactere = new ArrayList<>();
+            Random rand = new Random();
+            char random_minuscule = (char) ('a' + rand.nextInt(26));
+            liste_charactere.add(random_minuscule);
+            char random_majuscule = (char) ('A' + rand.nextInt(26));
+            liste_charactere.add(random_majuscule);
+            char random_chiffre = (char) ('0' + rand.nextInt(10));
+            liste_charactere.add(random_chiffre);
+            char random_special = (char) (33 + rand.nextInt(94));
+            liste_charactere.add(random_special);
 
-            case "2":
-                System.out.println("Abc5          -> " + isStrongPassword("1234"));
-                System.out.println("abcdef123456  -> " + isStrongPassword("abcdef123456"));
-                System.out.println("AbCdEf123456  -> " + isStrongPassword("AbCdEf123456"));
-                System.out.println("AbCdEf 123456 -> " + isStrongPassword("AbCdEf 123456"));
-                break;
+            String allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/~";
+            for (int i = 4; i < nbCar; i++) {
+                liste_charactere.add(allChars.charAt(rand.nextInt(allChars.length())));
+            }
 
-            case "3":
-                ArrayList<String> passwords = new ArrayList<>(
-                        List.of("Abc5", "abcdef123456", "AbCdEf123456", "AbCdEf 123456"));
-                HashMap<String, Boolean> password_map = checkPasswordsList(passwords);
+            Collections.shuffle(liste_charactere);
 
-                if (password_map != null) {
-                    for (Map.Entry<String, Boolean> entry : password_map.entrySet()) {
-                        System.out.println(entry.getKey() + " -> " + entry.getValue());
-                    }
-                }
-                break;
+            StringBuilder mot_de_passe = new StringBuilder();
 
-            case "4":
-                System.out.println("Generated password: " + generatePassword(12));
-                break;
+            for (char c : liste_charactere) {
+                mot_de_passe.append(c);
+            }
 
-            default:
-                System.out.println("Invalid question number: " + questionNumber);
+            return mot_de_passe.toString();
         }
-    }
 
+        public static void main(String[] args) {
+            if (args.length == 0) {
+                // No arguments provided, running all questions
+                for (int i = 1; i <= 4; i++)
+                    runQuestion(String.valueOf(i));
+            } else {
+                for (String arg : args) {
+                    runQuestion(arg);
+                }
+            }
+        }
+
+        private static void runQuestion(String questionNumber) {
+
+            System.out.println("\nQ" + questionNumber + "\n" + "-".repeat(20));
+            switch (questionNumber) {
+                case "1":
+                    String HashedPwd = "a97755204f392b4d8787b38d898671839b4a770a864e52862055cdbdf5bc5bee";
+                    String bruteForcedPwd = bruteForce6Digit(HashedPwd);
+                    System.out.println(bruteForcedPwd != null ? bruteForcedPwd : "No result found");
+                    break;
+
+                case "2":
+                    System.out.println("Abc5          -> " + isStrongPassword("1234"));
+                    System.out.println("abcdef123456  -> " + isStrongPassword("abcdef123456"));
+                    System.out.println("AbCdEf123456  -> " + isStrongPassword("AbCdEf123456"));
+                    System.out.println("AbCdEf 123456 -> " + isStrongPassword("AbCdEf 123456"));
+                    break;
+
+                case "3":
+                    ArrayList<String> passwords = new ArrayList<>(
+                            List.of("Abc5", "abcdef123456", "AbCdEf123456", "AbCdEf 123456"));
+                    HashMap<String, Boolean> password_map = checkPasswordsList(passwords);
+
+                    if (password_map != null) {
+                        for (Map.Entry<String, Boolean> entry : password_map.entrySet()) {
+                            System.out.println(entry.getKey() + " -> " + entry.getValue());
+                        }
+                    }
+                    break;
+
+                case "4":
+                    System.out.println("Generated password: " + generatePassword(12));
+                    break;
+
+                default:
+                    System.out.println("Invalid question number: " + questionNumber);
+            }
+        }
+
+    }
 }
