@@ -13,27 +13,27 @@ public class Library {
 
     //Attributes
     private String name;
-    private List<Book> books;
+    private List<Item> items;
 
     //Constructeur
-    public Library(String name, List<Book> books){
+    public Library(String name, List<Item> items){
         this.name = name;
-        this.books = (books != null) ? new ArrayList<>(books) : new ArrayList<>();
+        this.items = (items != null) ? new ArrayList<>(items) : new ArrayList<>();
     }
 
     /*Ajoute un livre à la librairie
     */
-    public void addBook(Book book){
-        this.books.add(book);
+    public void addItem(Item item){
+        this.items.add(item);
     }
 
     /*Retourne les livres de la librairie
     */
-    public String displayBooks(){
-        if(this.books.size()==0){
+    public String displayItems(){
+        if(this.items.size()==0){
             return "Il n'y a pas de livre dans la librairie";
         } else {
-            return this.books.toString();
+            return this.items.toString();
         }
     }
 
@@ -70,9 +70,9 @@ public class Library {
                         authors.put(authorName, author);
                         System.out.println(author.toString());
                     }
-                    Book book = new Book(isbn, title, author, year, pageCount);
+                    Book book = new Book(isbn, author, title, year, pageCount);
 
-                    this.addBook(book);
+                    this.addItem(book);
                 }
             }
         } catch (
