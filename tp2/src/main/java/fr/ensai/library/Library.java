@@ -18,7 +18,7 @@ public class Library {
     //Constructeur
     public Library(String name, List<Book> books){
         this.name = name;
-        this.books = new ArrayList<Book>(books);
+        this.books = (books != null) ? new ArrayList<>(books) : new ArrayList<>();
     }
 
     /*Ajoute un livre à la librairie

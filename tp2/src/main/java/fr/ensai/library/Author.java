@@ -15,10 +15,10 @@ public class Author {
     /**
      * Constructs a new Book object.
      */
-    public Author(String name, int age, String nationality) {
+    public Author(String name) {
         this.name = name;
-        this.age = age;
-        this.nationality = nationality;
+        this.age = 0;
+        this.nationality = "unknown";
     }
 
     public String getName() {
